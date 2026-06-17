@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=SteamPortfolio
+Comment=Track your Steam CS2 inventory value with price history and alerts
+Exec=steamportfolio
+Icon=io.github.HarperNicholson.SteamPortfolio
+Type=Application
+Categories=Finance;
+Keywords=steam;cs2;inventory;portfolio;trading;

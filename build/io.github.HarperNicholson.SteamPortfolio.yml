@@ -1,0 +1,51 @@
+app-id: io.github.HarperNicholson.SteamPortfolio
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: steamportfolio
+separate-locales: false
+
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.node22
+
+build-options:
+  append-path: /usr/lib/sdk/node22/bin
+
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --device=dri
+  - --talk-name=org.freedesktop.Notifications
+
+modules:
+  - name: steamportfolio
+    buildsystem: simple
+    build-options:
+      build-args:
+        - --share=network
+      env:
+        npm_config_cache: /run/build/steamportfolio/npm-cache
+        ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    build-commands:
+      - npm install
+      - npm run build
+      - npx electron-builder --linux dir --x64
+      - cp -r dist/linux-unpacked /app/lib/steamportfolio
+      - chmod +x /app/lib/steamportfolio/steamportfolio
+      - mkdir -p /app/bin
+      - |
+        cat > /app/bin/steamportfolio << 'EOF'
+        #!/bin/sh
+        exec /app/lib/steamportfolio/steamportfolio --no-sandbox "$@"
+        EOF
+      - chmod +x /app/bin/steamportfolio
+      - install -Dm644 resources/icon.png /app/share/icons/hicolor/512x512/apps/io.github.HarperNicholson.SteamPortfolio.png
+      - install -Dm644 build/io.github.HarperNicholson.SteamPortfolio.desktop /app/share/applications/io.github.HarperNicholson.SteamPortfolio.desktop
+      - install -Dm644 build/io.github.HarperNicholson.SteamPortfolio.metainfo.xml /app/share/metainfo/io.github.HarperNicholson.SteamPortfolio.metainfo.xml
+    sources:
+      - type: git
+        url: https://github.com/HarperNicholson/steam-portfolio.git
+        branch: main

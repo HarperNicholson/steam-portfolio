@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.HarperNicholson.SteamPortfolio</id>
+  <name>SteamPortfolio</name>
+  <summary>Track your Steam CS2 inventory value with price history and alerts</summary>
+  <description>
+    <p>
+      SteamPortfolio is a local-first desktop app for tracking your Steam CS2
+      inventory. It fetches live prices from the Steam Community Market, records
+      acquisition cost and date for every item, and alerts you when items hit
+      2×/3×/4× gains or drop from their all-time high.
+    </p>
+    <ul>
+      <li>Live prices from the Steam Community Market</li>
+      <li>Acquisition cost tracking with market and inventory history import</li>
+      <li>Price gain and all-time-high drop alerts via system notifications</li>
+      <li>Stacked display for duplicate items (×99 Recoil Case)</li>
+      <li>Price history charts per item</li>
+      <li>All data stored locally in SQLite — nothing leaves your machine</li>
+    </ul>
+  </description>
+  <url type="homepage">https://github.com/HarperNicholson/steam-portfolio</url>
+  <url type="bugtracker">https://github.com/HarperNicholson/steam-portfolio/issues</url>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <developer id="ca.harpernicholson">
+    <name>Harper Nicholson</name>
+  </developer>
+  <launchable type="desktop-id">io.github.HarperNicholson.SteamPortfolio.desktop</launchable>
+  <releases>
+    <release version="0.1.0" date="2026-06-17">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

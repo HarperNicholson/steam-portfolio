@@ -38,7 +38,7 @@
     "zustand": "^4.5.2"
   },
   "build": {
-    "appId": "com.steamportfolio.app",
+    "appId": "io.github.HarperNicholson.SteamPortfolio",
     "productName": "SteamPortfolio",
     "directories": {
       "buildResources": "resources",
