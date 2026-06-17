@@ -1,0 +1,10 @@
+node_modules/
+out/
+dist/
+*.tsbuildinfo
+
+# dev artifacts
+driver.mjs
+launch.sh
+steamportfolio-todo.txt
+.claude/

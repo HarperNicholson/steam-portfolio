@@ -1,0 +1,71 @@
+{
+  "name": "steamportfolio",
+  "version": "0.1.0",
+  "description": "Track and gain insights on your Steam CS2 inventory with price history and smart alerts",
+  "main": "out/main/index.js",
+  "author": "steamportfolio contributors",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "postinstall": "echo 'No native deps to rebuild'"
+  },
+  "dependencies": {
+    "electron-log": "^5.1.1",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@electron-toolkit/preload": "^3.0.0",
+    "@electron-toolkit/utils": "^3.0.0",
+    "@types/node": "^22.0.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "electron": "^42.4.1",
+    "electron-builder": "^24.13.3",
+    "electron-vite": "^2.3.0",
+    "playwright-core": "^1.61.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.0",
+    "recharts": "^2.12.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "zustand": "^4.5.2"
+  },
+  "build": {
+    "appId": "com.steamportfolio.app",
+    "productName": "SteamPortfolio",
+    "directories": {
+      "buildResources": "resources",
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*",
+      "!out/**/*.map"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Finance"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "asarUnpack": []
+  }
+}

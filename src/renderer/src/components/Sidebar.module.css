@@ -1,0 +1,192 @@
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  -webkit-app-region: drag;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  height: var(--titlebar-h);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.logo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.accountSection {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
+}
+
+.accountList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.accountItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  border: 1px solid transparent;
+  transition: all var(--transition);
+  width: 100%;
+}
+
+.accountItem:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.accountActive {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.accountName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.noAccounts {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 6px 4px;
+  margin-bottom: 8px;
+}
+
+.addAccountBtn {
+  width: 100%;
+  padding: 6px 10px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px dashed var(--accent-muted);
+  border-radius: var(--radius);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.addAccountBtn:hover {
+  background: var(--accent-muted);
+  color: var(--accent-hover);
+}
+
+.addForm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.addInput {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 12px;
+  border-radius: var(--radius);
+}
+
+.addFormButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.addFormButtons .btn {
+  flex: 1;
+  justify-content: center;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 10px;
+  -webkit-app-region: no-drag;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.navItem:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.navActive {
+  background: var(--bg-secondary) !important;
+  color: var(--accent) !important;
+}
+
+.navIcon {
+  font-size: 15px;
+  width: 18px;
+  text-align: center;
+}
+
+.footer {
+  padding: 12px;
+  border-top: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
+}
+
+.syncBtn {
+  width: 100%;
+  justify-content: center;
+  font-size: 12px;
+  padding: 7px 12px;
+}
