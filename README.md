@@ -15,23 +15,29 @@ Go to [Releases](https://github.com/HarperNicholson/steam-portfolio/releases/lat
 
 ### Linux (AppImage)
 
+Extract the AppImage once, then run directly — this avoids needing FUSE (required on Steam Deck / SteamOS):
+
 ```bash
 chmod +x SteamPortfolio-*.AppImage
-./SteamPortfolio-*.AppImage
+./SteamPortfolio-*.AppImage --appimage-extract
+mkdir -p ~/.local/share/SteamPortfolio
+mv squashfs-root/* ~/.local/share/SteamPortfolio/
+~/.local/share/SteamPortfolio/AppRun
 ```
 
-To add it to your app launcher and show the icon in your file manager:
+To add it to your app launcher:
 
 ```bash
-./SteamPortfolio-*.AppImage --appimage-extract
 mkdir -p ~/.local/share/icons/hicolor/512x512/apps/
-cp squashfs-root/usr/share/icons/hicolor/512x512/apps/steamportfolio.png ~/.local/share/icons/hicolor/512x512/apps/
-cp squashfs-root/steamportfolio.desktop ~/.local/share/applications/SteamPortfolio.desktop
-sed -i "s|Exec=steamportfolio|Exec=$HOME/Downloads/SteamPortfolio-*.AppImage|" ~/.local/share/applications/SteamPortfolio.desktop
-rm -rf squashfs-root
+cp ~/.local/share/SteamPortfolio/usr/share/icons/hicolor/512x512/apps/steamportfolio.png \
+   ~/.local/share/icons/hicolor/512x512/apps/
+sed "s|Exec=AppRun.*|Exec=$HOME/.local/share/SteamPortfolio/AppRun|" \
+    ~/.local/share/SteamPortfolio/steamportfolio.desktop \
+    > ~/.local/share/applications/SteamPortfolio.desktop
+update-desktop-database ~/.local/share/applications 2>/dev/null; true
 ```
 
-Then log out and back in to apply.
+Then log out and back in if the launcher entry doesn't appear immediately.
 
 ### Windows
 
