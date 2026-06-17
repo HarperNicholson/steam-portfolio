@@ -53,7 +53,8 @@
         "AppImage",
         "deb"
       ],
-      "category": "Finance"
+      "category": "Finance",
+      "icon": "resources/icons"
     },
     "win": {
       "target": [
