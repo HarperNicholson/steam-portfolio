@@ -43,7 +43,7 @@ export default function Dashboard(): JSX.Element {
 
   const topGainers = useMemo(() => {
     return [...inventory]
-      .filter((i) => i.current_price && i.acquisition_price)
+      .filter((i) => !i.hidden && i.marketable !== 0 && i.current_price && i.acquisition_price)
       .sort((a, b) => {
         const pa = gainPct(a.current_price, a.acquisition_price) ?? 0
         const pb = gainPct(b.current_price, b.acquisition_price) ?? 0
@@ -54,7 +54,7 @@ export default function Dashboard(): JSX.Element {
 
   const topByValue = useMemo(() => {
     return [...inventory]
-      .filter((i) => i.current_price)
+      .filter((i) => !i.hidden && i.marketable !== 0 && i.current_price)
       .sort((a, b) => (b.current_price ?? 0) * b.quantity - (a.current_price ?? 0) * a.quantity)
       .slice(0, 5)
   }, [inventory])
