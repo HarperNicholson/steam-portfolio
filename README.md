@@ -20,17 +20,18 @@ chmod +x SteamPortfolio-*.AppImage
 ./SteamPortfolio-*.AppImage
 ```
 
-To add it to your app launcher and show the icon in your file manager, run once:
+To add it to your app launcher and show the icon in your file manager:
 
 ```bash
-./SteamPortfolio-*.AppImage --appimage-integrate
+./SteamPortfolio-*.AppImage --appimage-extract
+mkdir -p ~/.local/share/icons/hicolor/512x512/apps/
+cp squashfs-root/usr/share/icons/hicolor/512x512/apps/steamportfolio.png ~/.local/share/icons/hicolor/512x512/apps/
+cp squashfs-root/steamportfolio.desktop ~/.local/share/applications/SteamPortfolio.desktop
+sed -i "s|Exec=steamportfolio|Exec=$HOME/Downloads/SteamPortfolio-*.AppImage|" ~/.local/share/applications/SteamPortfolio.desktop
+rm -rf squashfs-root
 ```
 
-To remove the integration:
-
-```bash
-./SteamPortfolio-*.AppImage --appimage-remove-custom-integrations
-```
+Then log out and back in to apply.
 
 ### Windows
 
