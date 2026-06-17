@@ -216,7 +216,7 @@ export default function Settings(): JSX.Element {
 
       <Section title="About">
         <p className={styles.hint}>
-          SteamPortfolio v0.1.0 · MIT License
+          SteamPortfolio v0.1.1 · MIT License
         </p>
         <p className={styles.hint}>
           Price data sourced from the Steam Community Market. Not affiliated with Valve.
