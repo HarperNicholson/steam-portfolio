@@ -1,6 +1,6 @@
 {
   "name": "steamportfolio",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Track and gain insights on your Steam CS2 inventory with price history and smart alerts",
   "main": "out/main/index.js",
   "author": "steamportfolio contributors",
