@@ -18,25 +18,6 @@ export function getDb(): DatabaseSync {
 }
 
 function migrate(db: DatabaseSync): void {
-  // Additive migrations — safe to re-run
-  try { db.exec("ALTER TABLE portfolio_items ADD COLUMN stickers TEXT DEFAULT ''") } catch { /* already exists */ }
-  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN game_appid INTEGER DEFAULT 730') } catch { /* already exists */ }
-  try { db.exec('ALTER TABLE price_snapshots ADD COLUMN acquisition_date_locked INTEGER DEFAULT 0') } catch { /* already exists */ }
-  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN marketable INTEGER DEFAULT 1') } catch { /* already exists */ }
-  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN hidden INTEGER DEFAULT 0') } catch { /* already exists */ }
-  // Fix ATH values that were accidentally set to NULL by the currency cache clear
-  db.exec("UPDATE price_snapshots SET all_time_high = COALESCE(current_price, 0) WHERE all_time_high IS NULL")
-  // Clear acquisition_date values the scheduler incorrectly set to "now".
-  // The scheduler bug set acquisition_date = current_time on first insert.
-  // Those dates are recent (within 30 days of last_fetched) whereas real acquisition
-  // dates are typically months/years old. Widen the window to catch all of them.
-  db.exec(`UPDATE price_snapshots
-    SET acquisition_date = NULL
-    WHERE acquisition_date IS NOT NULL
-      AND last_fetched IS NOT NULL
-      AND (last_fetched - acquisition_date) BETWEEN -60 AND 2592000
-      AND NOT COALESCE(acquisition_date_locked, 0)`)
-
   db.exec(`
     CREATE TABLE IF NOT EXISTS accounts (
       id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -117,6 +98,22 @@ function migrate(db: DatabaseSync): void {
       ('notifications_enabled', '1'),
       ('session_cookie', '');
   `)
+
+  // Additive column migrations — safe to re-run on existing databases
+  try { db.exec("ALTER TABLE portfolio_items ADD COLUMN stickers TEXT DEFAULT ''") } catch { /* already exists */ }
+  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN game_appid INTEGER DEFAULT 730') } catch { /* already exists */ }
+  try { db.exec('ALTER TABLE price_snapshots ADD COLUMN acquisition_date_locked INTEGER DEFAULT 0') } catch { /* already exists */ }
+  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN marketable INTEGER DEFAULT 1') } catch { /* already exists */ }
+  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN hidden INTEGER DEFAULT 0') } catch { /* already exists */ }
+
+  // Data fixes — safe to re-run, no-op when data is already correct
+  db.exec("UPDATE price_snapshots SET all_time_high = COALESCE(current_price, 0) WHERE all_time_high IS NULL")
+  db.exec(`UPDATE price_snapshots
+    SET acquisition_date = NULL
+    WHERE acquisition_date IS NOT NULL
+      AND last_fetched IS NOT NULL
+      AND (last_fetched - acquisition_date) BETWEEN -60 AND 2592000
+      AND NOT COALESCE(acquisition_date_locked, 0)`)
 }
 
 export function transaction(db: DatabaseSync, fn: () => void): void {
