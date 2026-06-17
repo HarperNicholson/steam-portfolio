@@ -57,10 +57,11 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
 
     const insert = db.prepare(`
       INSERT INTO portfolio_items
-        (account_id, asset_id, class_id, instance_id, market_hash_name, name, type, rarity, rarity_color, exterior, icon_url, tradable, stickers, game_appid)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (account_id, asset_id, class_id, instance_id, market_hash_name, name, type, rarity, rarity_color, exterior, icon_url, tradable, marketable, stickers, game_appid)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(account_id, asset_id) DO UPDATE SET
         tradable = excluded.tradable,
+        marketable = excluded.marketable,
         stickers = excluded.stickers,
         game_appid = excluded.game_appid
     `)
@@ -70,6 +71,7 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
           accountId, item.asset_id, item.class_id, item.instance_id,
           item.market_hash_name, item.name, item.type ?? null, item.rarity ?? null,
           item.rarity_color ?? null, item.exterior ?? null, item.icon_url, item.tradable,
+          item.marketable,
           item.stickers.length > 0 ? JSON.stringify(item.stickers) : '',
           appId
         )
@@ -84,13 +86,14 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
     const db = getDb()
     const rows = db.prepare(`
       SELECT market_hash_name, name, type, rarity, rarity_color, exterior, icon_url,
-             quantity, tradable, stickers, game_appid, asset_id,
+             quantity, tradable, marketable, hidden, stickers, game_appid, asset_id,
              current_price, acquisition_price, acquisition_date, all_time_high, last_fetched
       FROM (
         -- Non-stickered items grouped by market_hash_name + game
         SELECT
           pi.market_hash_name, pi.name, pi.type, pi.rarity, pi.rarity_color, pi.exterior, pi.icon_url,
-          COUNT(*) as quantity, MIN(pi.tradable) as tradable, '' as stickers,
+          COUNT(*) as quantity, MIN(pi.tradable) as tradable,
+          MIN(pi.marketable) as marketable, MAX(pi.hidden) as hidden, '' as stickers,
           pi.game_appid, NULL as asset_id,
           ps.current_price, ps.acquisition_price, ps.acquisition_date, ps.all_time_high, ps.last_fetched
         FROM portfolio_items pi
@@ -101,7 +104,7 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
         -- Stickered weapons as individual items
         SELECT
           pi.market_hash_name, pi.name, pi.type, pi.rarity, pi.rarity_color, pi.exterior, pi.icon_url,
-          1 as quantity, pi.tradable, pi.stickers,
+          1 as quantity, pi.tradable, pi.marketable, pi.hidden, pi.stickers,
           pi.game_appid, pi.asset_id,
           ps.current_price, ps.acquisition_price, ps.acquisition_date, ps.all_time_high, ps.last_fetched
         FROM portfolio_items pi
@@ -111,6 +114,16 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
       ORDER BY COALESCE(current_price, 0) * quantity DESC
     `).all(accountId, accountId)
     return rows
+  })
+
+  ipcMain.handle('inventory:hide', (_e, accountId: number, marketHashName: string) => {
+    getDb().prepare('UPDATE portfolio_items SET hidden = 1 WHERE account_id = ? AND market_hash_name = ?').run(accountId, marketHashName)
+    return { ok: true }
+  })
+
+  ipcMain.handle('inventory:unhide', (_e, accountId: number, marketHashName: string) => {
+    getDb().prepare('UPDATE portfolio_items SET hidden = 0 WHERE account_id = ? AND market_hash_name = ?').run(accountId, marketHashName)
+    return { ok: true }
   })
 
   // ── Prices ────────────────────────────────────────────────────────────────

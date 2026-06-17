@@ -23,6 +23,8 @@ export type InventoryRow = {
   icon_url: string
   quantity: number
   tradable: number
+  marketable: number
+  hidden: number
   stickers: string  // JSON string of StickerInfo[] — empty string means no stickers
   game_appid: number
   asset_id: string | null  // set only for stickered items (individual rows)
@@ -66,7 +68,9 @@ const api = {
   },
   inventory: {
     sync: (accountId: number, appId?: number): Promise<{ synced: number }> => ipcRenderer.invoke('inventory:sync', accountId, appId ?? 730),
-    list: (accountId: number): Promise<InventoryRow[]> => ipcRenderer.invoke('inventory:list', accountId)
+    list: (accountId: number): Promise<InventoryRow[]> => ipcRenderer.invoke('inventory:list', accountId),
+    hide: (accountId: number, marketHashName: string): Promise<{ ok: boolean }> => ipcRenderer.invoke('inventory:hide', accountId, marketHashName),
+    unhide: (accountId: number, marketHashName: string): Promise<{ ok: boolean }> => ipcRenderer.invoke('inventory:unhide', accountId, marketHashName)
   },
   prices: {
     history: (marketHashName: string): Promise<PricePoint[]> => ipcRenderer.invoke('prices:history', marketHashName),

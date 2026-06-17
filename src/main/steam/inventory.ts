@@ -55,6 +55,7 @@ export type ProcessedItem = {
   exterior: string | null
   icon_url: string
   tradable: number
+  marketable: number
   amount: number
   stickers: StickerInfo[]
 }
@@ -204,6 +205,7 @@ export async function fetchSteamInventory(
       exterior: exteriorTag ? (WEAR_MAP[exteriorTag.internal_name] ?? exteriorTag.localized_tag_name) : null,
       icon_url: `${ICON_BASE}${desc.icon_url}`,
       tradable: desc.tradable,
+      marketable: desc.marketable,
       amount: parseInt(asset.amount, 10) || 1,
       stickers: parseStickers(desc)
     })

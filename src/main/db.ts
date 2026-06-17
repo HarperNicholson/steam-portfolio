@@ -22,6 +22,8 @@ function migrate(db: DatabaseSync): void {
   try { db.exec("ALTER TABLE portfolio_items ADD COLUMN stickers TEXT DEFAULT ''") } catch { /* already exists */ }
   try { db.exec('ALTER TABLE portfolio_items ADD COLUMN game_appid INTEGER DEFAULT 730') } catch { /* already exists */ }
   try { db.exec('ALTER TABLE price_snapshots ADD COLUMN acquisition_date_locked INTEGER DEFAULT 0') } catch { /* already exists */ }
+  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN marketable INTEGER DEFAULT 1') } catch { /* already exists */ }
+  try { db.exec('ALTER TABLE portfolio_items ADD COLUMN hidden INTEGER DEFAULT 0') } catch { /* already exists */ }
   // Fix ATH values that were accidentally set to NULL by the currency cache clear
   db.exec("UPDATE price_snapshots SET all_time_high = COALESCE(current_price, 0) WHERE all_time_high IS NULL")
   // Clear acquisition_date values the scheduler incorrectly set to "now".

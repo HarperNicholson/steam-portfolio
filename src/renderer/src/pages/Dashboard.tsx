@@ -24,7 +24,7 @@ export default function Dashboard(): JSX.Element {
     let totalCost = 0
     let itemsWithPrice = 0
 
-    for (const item of inventory) {
+    for (const item of inventory.filter(i => !i.hidden && i.marketable !== 0)) {
       const qty = item.quantity
       if (item.current_price) {
         totalValue += item.current_price * qty

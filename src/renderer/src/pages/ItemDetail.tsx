@@ -29,7 +29,7 @@ export default function ItemDetail(): JSX.Element {
   const { marketHashName: encoded } = useParams<{ marketHashName: string }>()
   const marketHashName = decodeURIComponent(encoded ?? '')
   const navigate = useNavigate()
-  const { inventory, addToast, currencySymbol, settings } = useStore()
+  const { inventory, addToast, currencySymbol, settings, activeAccountId, loadInventory } = useStore()
 
   const [history, setHistory] = useState<PricePoint[]>([])
   const [snapshot, setSnapshot] = useState<Snapshot>(null)
@@ -39,6 +39,7 @@ export default function ItemDetail(): JSX.Element {
   const [editAcqDate, setEditAcqDate] = useState('')
   const [editAcqPrice, setEditAcqPrice] = useState('')
   const [savingAcq, setSavingAcq] = useState(false)
+  const [togglingHide, setTogglingHide] = useState(false)
 
   const inventoryItem = inventory.find((i) => i.market_hash_name === marketHashName)
 
@@ -94,6 +95,27 @@ export default function ItemDetail(): JSX.Element {
       addToast('Reset failed', String(err), 'warning')
     } finally {
       setSavingAcq(false)
+    }
+  }
+
+  async function toggleHidden(): Promise<void> {
+    if (!activeAccountId) return
+    setTogglingHide(true)
+    try {
+      const isHidden = !!inventoryItem?.hidden
+      if (isHidden) {
+        await window.sp.inventory.unhide(activeAccountId, marketHashName)
+        addToast('Unhidden', `${marketHashName} is back in your results`, 'success')
+      } else {
+        await window.sp.inventory.hide(activeAccountId, marketHashName)
+        addToast('Hidden', `${marketHashName} removed from results`, 'info')
+        navigate(-1)
+      }
+      await loadInventory(activeAccountId)
+    } catch (err) {
+      addToast('Error', String(err), 'warning')
+    } finally {
+      setTogglingHide(false)
     }
   }
 
@@ -318,6 +340,21 @@ export default function ItemDetail(): JSX.Element {
             {savingAlert ? 'Saving…' : 'Save Alert Config'}
           </button>
         </div>
+      </div>
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>Visibility</h2>
+        <p className={styles.hint}>
+          {inventoryItem?.hidden
+            ? 'This item is hidden from your inventory and excluded from portfolio totals.'
+            : 'Hide this item to exclude it from your inventory view and portfolio totals.'}
+        </p>
+        <button
+          className={`btn ${inventoryItem?.hidden ? 'btn-secondary' : 'btn-danger'}`}
+          onClick={toggleHidden}
+          disabled={togglingHide}
+        >
+          {togglingHide ? '…' : inventoryItem?.hidden ? 'Unhide item' : 'Hide from results'}
+        </button>
       </div>
     </div>
   )

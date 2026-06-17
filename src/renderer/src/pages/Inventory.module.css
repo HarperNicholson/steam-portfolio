@@ -92,6 +92,13 @@
   border-color: var(--accent) !important;
 }
 
+.visibilityRow {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
 .sortSelect {
   padding: 7px 10px;
   min-width: 150px;

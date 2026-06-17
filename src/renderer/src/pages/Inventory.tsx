@@ -37,6 +37,8 @@ export default function Inventory(): JSX.Element {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [showAddGame, setShowAddGame] = useState(false)
   const [customAppId, setCustomAppId] = useState('')
+  const [showNonMarketable, setShowNonMarketable] = useState(false)
+  const [showHidden, setShowHidden] = useState(false)
 
   // All game_appids present in the inventory
   const presentGames = useMemo(() => {
@@ -67,8 +69,14 @@ export default function Inventory(): JSX.Element {
     syncInventory(activeAccountId, appId)
   }
 
+  const hiddenCount = useMemo(() => inventory.filter(i => i.hidden).length, [inventory])
+  const nonMarketableCount = useMemo(() => inventory.filter(i => !i.hidden && !i.marketable).length, [inventory])
+
   const filtered = useMemo(() => {
     let items = inventory
+
+    if (!showHidden) items = items.filter((i) => !i.hidden)
+    if (!showNonMarketable) items = items.filter((i) => i.marketable !== 0)
 
     // Filter by selected game (unless it's not in presentGames, show all)
     if (presentGames.includes(selectedAppId)) {
@@ -187,6 +195,25 @@ export default function Inventory(): JSX.Element {
               {TYPE_FILTER_LABELS[f]}
             </button>
           ))}
+        </div>
+
+        <div className={styles.visibilityRow}>
+          {nonMarketableCount > 0 && (
+            <button
+              className={`${styles.filterBtn} ${showNonMarketable ? styles.filterActive : ''}`}
+              onClick={() => setShowNonMarketable((v) => !v)}
+            >
+              {showNonMarketable ? 'Hiding' : 'Show'} non-marketable ({nonMarketableCount})
+            </button>
+          )}
+          {hiddenCount > 0 && (
+            <button
+              className={`${styles.filterBtn} ${showHidden ? styles.filterActive : ''}`}
+              onClick={() => setShowHidden((v) => !v)}
+            >
+              {showHidden ? 'Hiding' : 'Show'} hidden ({hiddenCount})
+            </button>
+          )}
         </div>
 
         <select
