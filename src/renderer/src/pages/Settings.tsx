@@ -216,12 +216,18 @@ export default function Settings(): JSX.Element {
 
       <Section title="About">
         <p className={styles.hint}>
-          SteamPortfolio v0.1.0 · Open source · MIT License
+          SteamPortfolio v0.1.0 · MIT License
         </p>
         <p className={styles.hint}>
           Price data sourced from the Steam Community Market. Not affiliated with Valve.
         </p>
         <div className={styles.supportRow}>
+          <button
+            className={styles.githubBtn}
+            onClick={() => window.sp.shell.openExternal('https://github.com/HarperNicholson/steam-portfolio')}
+          >
+            View source on GitHub
+          </button>
           <button
             className={styles.supportBtn}
             onClick={() => window.sp.shell.openExternal('https://harpernicholson.ca')}

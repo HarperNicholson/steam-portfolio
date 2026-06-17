@@ -1,3 +1,4 @@
+#!/usr/bin/env xdg-open
 [Desktop Entry]
 Name=SteamPortfolio
 Comment=Track your Steam CS2 inventory value with price history and alerts

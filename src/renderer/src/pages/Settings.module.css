@@ -207,6 +207,27 @@
   padding-top: 4px;
 }
 
+.githubBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.githubBtn:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-muted);
+  color: var(--text-primary);
+}
+
 .supportBtn {
   display: inline-flex;
   align-items: center;

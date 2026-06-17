@@ -34,18 +34,25 @@ jobs:
             dist/*.deb
           generate_release_notes: true
 
-  build-flatpak:
-    runs-on: ubuntu-22.04
+  build-windows:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      - uses: actions/setup-node@v4
         with:
-          bundle: SteamPortfolio.flatpak
-          manifest-path: build/io.github.HarperNicholson.SteamPortfolio.yml
-          cache-key: flatpak-builder-${{ github.sha }}
-          upload-artifact: false
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Build Windows installer + portable
+        run: npx electron-builder --win nsis portable --x64
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: SteamPortfolio.flatpak
+          files: |
+            dist/*.exe
