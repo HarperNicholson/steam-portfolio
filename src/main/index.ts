@@ -26,7 +26,7 @@ function createWindow(): void {
     minWidth: 900,
     minHeight: 600,
     backgroundColor: '#1b2838',
-    icon: path.join(__dirname, '../../resources/icon.png'),
+    icon: path.join(app.isPackaged ? process.resourcesPath : path.join(__dirname, '../../resources'), 'icon.png'),
     show: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
