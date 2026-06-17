@@ -1,19 +1,12 @@
 # SteamPortfolio
 
-Track your Steam CS2 inventory value with price history and smart alerts. Built for the Steam Deck, works on any Linux or Windows machine.
+Track your Steam CS2 inventory value with price history and smart alerts. Built for the Steam Deck.
 
 ## Download
 
-Go to [Releases](https://github.com/HarperNicholson/steam-portfolio/releases/latest) and grab the file for your platform:
-
-| Platform | File |
-|----------|------|
-| Linux | `SteamPortfolio-x.x.x.AppImage` |
-| Windows | `SteamPortfolio-x.x.x-setup.exe` |
+Go to [Releases](https://github.com/HarperNicholson/steam-portfolio/releases/latest) and download `SteamPortfolio-x.x.x.AppImage`.
 
 ## Install
-
-### Linux (AppImage)
 
 Extract the AppImage once, then run directly — this avoids needing FUSE (required on Steam Deck / SteamOS):
 
@@ -38,10 +31,6 @@ update-desktop-database ~/.local/share/applications 2>/dev/null; true
 ```
 
 Then log out and back in if the launcher entry doesn't appear immediately.
-
-### Windows
-
-Run the `-setup.exe` installer, or use the portable `.exe` if you prefer not to install.
 
 ## Features
 

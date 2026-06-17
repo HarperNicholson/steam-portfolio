@@ -50,22 +50,10 @@
     ],
     "linux": {
       "target": [
-        "AppImage",
-        "deb"
+        "AppImage"
       ],
       "category": "Finance",
       "icon": "resources/icons"
-    },
-    "win": {
-      "target": [
-        "nsis",
-        "portable"
-      ]
-    },
-    "mac": {
-      "target": [
-        "dmg"
-      ]
     },
     "asarUnpack": []
   }
