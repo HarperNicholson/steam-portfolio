@@ -11,11 +11,12 @@ log.info('SteamPortfolio starting', app.getVersion())
 
 Menu.setApplicationMenu(null)
 
-// On SteamOS/Linux the Chromium zygote sandbox crashes; disable sandboxing for stable launch
-app.commandLine.appendSwitch('no-sandbox')
-app.commandLine.appendSwitch('disable-setuid-sandbox')
-// Software rendering avoids GPU process crashes on Steam Deck AMD GPU
-app.disableHardwareAcceleration()
+if (process.platform === 'linux') {
+  // SteamOS/Linux: Chromium zygote sandbox crashes and Steam Deck AMD GPU needs software rendering
+  app.commandLine.appendSwitch('no-sandbox')
+  app.commandLine.appendSwitch('disable-setuid-sandbox')
+  app.disableHardwareAcceleration()
+}
 
 let mainWindow: BrowserWindow | null = null
 
