@@ -1,6 +1,6 @@
 # SteamPortfolio
 
-Track your Steam CS2 inventory value with price history and smart alerts. Built for the Steam Deck.
+Track your Steam CS2 inventory value with price history and smart alerts. Built for Steam Deck and Bazzite.
 
 ## Download
 
@@ -8,7 +8,7 @@ Go to [Releases](https://github.com/HarperNicholson/steam-portfolio/releases/lat
 
 ## Install
 
-Extract the AppImage once, then run directly — this avoids needing FUSE (required on Steam Deck / SteamOS):
+Extract the AppImage once, then run directly — this avoids needing FUSE (required on Steam Deck, Bazzite, and other immutable distros):
 
 ```bash
 chmod +x SteamPortfolio-*.AppImage
