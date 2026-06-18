@@ -1,0 +1,48 @@
+.wrap {
+  width: 100%;
+  padding: 8px 0;
+}
+
+.rangeBar {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+.rangeBtn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 7px;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.rangeBtn:hover {
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+.rangeBtnActive {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 180px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius);
+}

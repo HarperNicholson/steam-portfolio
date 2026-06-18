@@ -1,0 +1,231 @@
+/* ── Steam-Dark Theme (default) ─────────────────────────────────────────── */
+:root,
+[data-theme="steam-dark"] {
+  --bg-base:        #1b2838;
+  --bg-secondary:   #2a475e;
+  --bg-panel:       #16202d;
+  --bg-card:        #1e2837;
+  --bg-card-hover:  #253343;
+  --bg-input:       #131f2e;
+
+  --accent:         #1a9fff;
+  --accent-hover:   #66c0f4;
+  --accent-muted:   #1a4f7a;
+
+  --text-primary:   #c6d4df;
+  --text-secondary: #8f98a0;
+  --text-muted:     #4e6070;
+  --text-on-accent: #ffffff;
+
+  --green:          #a5c55d;
+  --green-bg:       #2a3d12;
+  --red:            #c24e45;
+  --red-bg:         #3d1212;
+  --yellow:         #e4ae39;
+  --yellow-bg:      #3d3012;
+
+  --border:         #3d5266;
+  --border-subtle:  #263343;
+  --scrollbar:      #2a3f5f;
+
+  --sidebar-width:  220px;
+  --titlebar-h:     38px;
+  --radius:         4px;
+  --transition:     150ms ease;
+
+  --rarity-consumer:   #b0c3d9;
+  --rarity-industrial: #5e98d9;
+  --rarity-milspec:    #4b69ff;
+  --rarity-restricted: #8847ff;
+  --rarity-classified: #d32ce6;
+  --rarity-covert:     #eb4b4b;
+  --rarity-contraband: #e4ae39;
+}
+
+/* ── Steam-Light Theme ──────────────────────────────────────────────────── */
+[data-theme="steam-light"] {
+  --bg-base:        #eef3f8;
+  --bg-secondary:   #c2cfe0;
+  --bg-panel:       #dce7f0;
+  --bg-card:        #f0f5f9;
+  --bg-card-hover:  #e3ecf4;
+  --bg-input:       #ffffff;
+
+  --accent:         #1a9fff;
+  --accent-hover:   #0c80d4;
+  --accent-muted:   #b3d9f5;
+
+  --text-primary:   #1b2838;
+  --text-secondary: #3d5266;
+  --text-muted:     #8f98a0;
+  --text-on-accent: #ffffff;
+
+  --green:          #4c7a1a;
+  --green-bg:       #dff0c8;
+  --red:            #c0392b;
+  --red-bg:         #fde8e8;
+  --yellow:         #a07800;
+  --yellow-bg:      #fdf3d0;
+
+  --border:         #a0b5c8;
+  --border-subtle:  #c8d8e8;
+  --scrollbar:      #b0c5d8;
+}
+
+/* ── OLED-Black Theme ───────────────────────────────────────────────────── */
+[data-theme="oled-black"] {
+  --bg-base:        #000000;
+  --bg-secondary:   #0d1117;
+  --bg-panel:       #060a0f;
+  --bg-card:        #0d1117;
+  --bg-card-hover:  #161c24;
+  --bg-input:       #0a0e14;
+  --accent:         #1a9fff;
+  --accent-hover:   #66c0f4;
+  --accent-muted:   #0c2e4a;
+  --text-primary:   #c6d4df;
+  --text-secondary: #7a8a98;
+  --text-muted:     #3a4a58;
+  --border:         #1e2d3d;
+  --border-subtle:  #141d26;
+  --scrollbar:      #1e2d3d;
+}
+
+/* ── Reset & Base ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-muted); }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  transition: border-color var(--transition);
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23c6d4df' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+[data-theme="steam-light"] select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%231b2838' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+}
+
+/* ── Utility ────────────────────────────────────────────────────────────── */
+.positive { color: var(--green); }
+.negative { color: var(--red); }
+.muted    { color: var(--text-muted); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 13px;
+  transition: background var(--transition), opacity var(--transition);
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--bg-card-hover); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.btn-ghost:hover { color: var(--text-primary); background: var(--bg-card-hover); }
+
+.btn-danger {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+.btn-danger:hover { background: var(--red); color: #fff; }
+
+/* ── Skeleton loading ───────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius);
+}
+
+/* ── Toast animations ───────────────────────────────────────────────────── */
+@keyframes slideIn {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
