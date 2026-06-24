@@ -3,7 +3,7 @@
   "version": "0.1.41",
   "description": "Track and gain insights on your Steam CS2 inventory with price history and smart alerts",
   "main": "out/main/index.js",
-  "author": "steamportfolio contributors",
+  "author": "Harper Nicholson <harper@harpernicholson.ca>",
   "license": "MIT",
   "scripts": {
     "dev": "electron-vite dev",
