@@ -83,6 +83,7 @@ const api = {
       acquisition_price: number | null
       acquisition_date: number | null
       all_time_high: number
+      smart_peak: number | null
     } | null> => ipcRenderer.invoke('prices:snapshot', marketHashName),
     setAcquisition: (marketHashName: string, acquisitionDate: number | null, acquisitionPrice: number | null): Promise<{ ok: boolean }> =>
       ipcRenderer.invoke('prices:set-acquisition', marketHashName, acquisitionDate, acquisitionPrice),
@@ -109,6 +110,9 @@ const api = {
   },
   notifications: {
     test: (): Promise<{ ok: boolean }> => ipcRenderer.invoke('notifications:test')
+  },
+  email: {
+    test: (): Promise<{ ok: boolean }> => ipcRenderer.invoke('email:test')
   },
   shell: {
     openExternal: (url: string): Promise<void> => ipcRenderer.invoke('shell:open-external', url)

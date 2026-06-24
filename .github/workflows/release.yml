@@ -22,12 +22,43 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Build AppImage
-        run: npx electron-builder --linux AppImage --x64
+      - name: Install packaging tools
+        run: sudo apt-get install -y rpm fakeroot
+
+      - name: Build AppImage, RPM, and Pacman
+        run: npx electron-builder --linux AppImage rpm pacman --x64
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.AppImage
+          files: |
+            dist/*.AppImage
+            dist/*.rpm
+            dist/*.pkg.tar.*
+          fail_on_unmatched_files: false
+          generate_release_notes: true
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Build Windows installer
+        run: npx electron-builder --win nsis --x64
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
+          fail_on_unmatched_files: false
           generate_release_notes: true

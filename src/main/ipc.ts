@@ -5,6 +5,7 @@ import { fetchSteamInventory, resolveSteamId, fetchSteamProfile, detectCurrencyF
 import { fetchPriceHistory, getCachedPriceHistory, fetchCurrentPrice, fetchMarketHistory, applyMarketHistory, applyInventoryHistory, CURRENCY_PARAMS } from './steam/market'
 import { fetchInventoryHistory } from './steam/inventory_history'
 import { upsertAlertConfig, getAlertConfig, getRecentAlerts, sendSystemNotification } from './portfolio/alerts'
+import { testEmail } from './email'
 import { runPriceUpdate } from './scheduler'
 
 export function registerIpcHandlers(mainWindow: BrowserWindow): void {
@@ -261,6 +262,11 @@ export function registerIpcHandlers(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('notifications:test', () => {
     sendSystemNotification('SteamPortfolio', 'System notifications are working!')
+    return { ok: true }
+  })
+
+  ipcMain.handle('email:test', async () => {
+    await testEmail()
     return { ok: true }
   })
 

@@ -96,7 +96,18 @@ function migrate(db: DatabaseSync): void {
       ('currency', 'USD'),
       ('refresh_interval_hours', '6'),
       ('notifications_enabled', '1'),
-      ('session_cookie', '');
+      ('session_cookie', ''),
+      ('email_enabled', '0'),
+      ('email_to', ''),
+      ('email_smtp_host', ''),
+      ('email_smtp_port', '587'),
+      ('email_smtp_user', ''),
+      ('email_smtp_pass', ''),
+      ('email_smtp_secure', '0'),
+      ('default_gain_multipliers', '[2,3,4]'),
+      ('default_ath_drop_threshold', '0.1'),
+      ('default_alerts_enabled', '0'),
+      ('smart_range_days', '0');
   `)
 
   // Additive column migrations — safe to re-run on existing databases
@@ -105,6 +116,7 @@ function migrate(db: DatabaseSync): void {
   try { db.exec('ALTER TABLE price_snapshots ADD COLUMN acquisition_date_locked INTEGER DEFAULT 0') } catch { /* already exists */ }
   try { db.exec('ALTER TABLE portfolio_items ADD COLUMN marketable INTEGER DEFAULT 1') } catch { /* already exists */ }
   try { db.exec('ALTER TABLE portfolio_items ADD COLUMN hidden INTEGER DEFAULT 0') } catch { /* already exists */ }
+  try { db.exec('ALTER TABLE price_snapshots ADD COLUMN smart_peak REAL') } catch { /* already exists */ }
 
   // Data fixes — safe to re-run, no-op when data is already correct
   db.exec("UPDATE price_snapshots SET all_time_high = COALESCE(current_price, 0) WHERE all_time_high IS NULL")

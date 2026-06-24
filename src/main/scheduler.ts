@@ -4,6 +4,7 @@ import { BrowserWindow } from 'electron'
 import { getDb } from './db'
 import { fetchCurrentPrice, findPriceAtDate, getCachedPriceHistory, fetchPriceHistory, CURRENCY_PARAMS, CurrencyParams } from './steam/market'
 import { checkAlerts, sendSystemNotification, FiredAlert } from './portfolio/alerts'
+import { sendEmailNotification } from './email'
 
 let scheduledTask: cron.ScheduledTask | null = null
 let lastRun = 0
@@ -57,13 +58,14 @@ export async function runPriceUpdate(mainWindow: BrowserWindow | null): Promise<
 
       const snapshot = db
         .prepare('SELECT * FROM price_snapshots WHERE market_hash_name = ?')
-        .get(name) as { current_price: number; acquisition_price: number | null; all_time_high: number } | undefined
+        .get(name) as { current_price: number; acquisition_price: number | null; all_time_high: number; smart_peak: number | null } | undefined
 
       if (snapshot) {
-        const fired = checkAlerts(name, snapshot.current_price, snapshot.acquisition_price, snapshot.all_time_high)
+        const fired = checkAlerts(name, snapshot.current_price, snapshot.acquisition_price, snapshot.all_time_high, snapshot.smart_peak)
         for (const alert of fired) {
           allFired.push(alert)
           sendSystemNotification('SteamPortfolio Alert', alert.message)
+          void sendEmailNotification('SteamPortfolio Alert', alert.message)
         }
       }
 
@@ -103,17 +105,31 @@ async function refreshItemPrice(marketHashName: string, sessionCookie?: string, 
     .get(marketHashName) as { ath: number | null } | undefined
   const newAth = Math.max(athRow?.ath ?? 0, existing?.all_time_high ?? 0, price)
 
+  const smartRangeDays = parseInt(
+    (db.prepare("SELECT value FROM settings WHERE key = 'smart_range_days'").get() as { value: string } | undefined)?.value ?? '0',
+    10
+  )
+  let smartPeak: number | null = null
+  if (smartRangeDays > 0 && cached.length > 0) {
+    const firstTs = cached[0].timestamp
+    const cutoffTs = firstTs + smartRangeDays * 86400
+    const afterRange = cached.filter((p) => p.timestamp >= cutoffTs)
+    const peakFromHistory = afterRange.reduce((max, p) => Math.max(max, p.price_usd), 0)
+    smartPeak = Math.max(peakFromHistory, price) || null
+  }
+
   // Only update price data — never touch acquisition_date/price here.
   // acquisition_date is set exclusively by the history import to avoid
   // stamping every new item with today's date.
   db.prepare(`
-    INSERT INTO price_snapshots(market_hash_name, acquisition_price, acquisition_date, all_time_high, current_price, last_fetched)
-    VALUES (?, NULL, NULL, ?, ?, ?)
+    INSERT INTO price_snapshots(market_hash_name, acquisition_price, acquisition_date, all_time_high, current_price, last_fetched, smart_peak)
+    VALUES (?, NULL, NULL, ?, ?, ?, ?)
     ON CONFLICT(market_hash_name) DO UPDATE SET
       all_time_high = MAX(COALESCE(all_time_high, 0), excluded.all_time_high),
       current_price = excluded.current_price,
-      last_fetched = excluded.last_fetched
-  `).run(marketHashName, newAth, price, now)
+      last_fetched = excluded.last_fetched,
+      smart_peak = excluded.smart_peak
+  `).run(marketHashName, newAth, price, now, smartPeak)
 
   // Backfill acquisition_price for items that now have a date but no price
   if (cached.length > 0 && existing?.acquisition_date && !existing?.acquisition_price) {

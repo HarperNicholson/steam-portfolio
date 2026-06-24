@@ -22,7 +22,7 @@ function StickerIcon({ sticker, large }: { sticker: StickerInfo; large?: boolean
     if (priceState.status === 'idle') {
       setPriceState({ status: 'loading', price: null })
       window.sp.prices.current(`Sticker | ${sticker.name}`)
-        .then((r) => setPriceState({ status: 'done', price: r.lowest_price }))
+        .then((r) => setPriceState({ status: 'done', price: r.median_price ?? r.lowest_price }))
         .catch(() => setPriceState({ status: 'done', price: null }))
     }
   }

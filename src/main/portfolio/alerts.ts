@@ -14,7 +14,8 @@ export function checkAlerts(
   marketHashName: string,
   currentPrice: number,
   acquisitionPrice: number | null,
-  allTimeHigh: number
+  allTimeHigh: number,
+  smartPeak?: number | null
 ): FiredAlert[] {
   const db = getDb()
   const configRow = db
@@ -47,8 +48,11 @@ export function checkAlerts(
     }
   }
 
-  if (allTimeHigh > 0 && config.ath_drop_threshold > 0) {
-    const dropPercent = (allTimeHigh - currentPrice) / allTimeHigh
+  const peakForDrop = (smartPeak ?? 0) > 0 ? smartPeak! : allTimeHigh
+  const peakLabel = (smartPeak ?? 0) > 0 ? 'Smart Peak' : 'ATH'
+
+  if (peakForDrop > 0 && config.ath_drop_threshold > 0) {
+    const dropPercent = (peakForDrop - currentPrice) / peakForDrop
     if (dropPercent >= config.ath_drop_threshold) {
       const alertType = 'ath_drop'
       if (!hasTriggeredRecently(marketHashName, alertType, 24 * 60 * 60)) {
@@ -56,7 +60,7 @@ export function checkAlerts(
           market_hash_name: marketHashName,
           alert_type: alertType,
           price: currentPrice,
-          message: `${marketHashName} dropped ${(dropPercent * 100).toFixed(1)}% from ATH ($${currentPrice.toFixed(2)})`
+          message: `${marketHashName} dropped ${(dropPercent * 100).toFixed(1)}% from ${peakLabel} ($${currentPrice.toFixed(2)})`
         })
         recordAlert(marketHashName, alertType, currentPrice)
       }
@@ -140,11 +144,15 @@ export function getAlertConfig(marketHashName: string): AlertConfig {
     .get(marketHashName) as (Omit<AlertConfig, 'gain_multipliers' | 'enabled'> & { gain_multipliers: string; enabled: number }) | undefined
 
   if (!row) {
+    const settingsRows = db
+      .prepare("SELECT key, value FROM settings WHERE key IN ('default_gain_multipliers', 'default_ath_drop_threshold', 'default_alerts_enabled')")
+      .all() as { key: string; value: string }[]
+    const s = Object.fromEntries(settingsRows.map((r) => [r.key, r.value]))
     return {
       market_hash_name: marketHashName,
-      gain_multipliers: [2, 3, 4],
-      ath_drop_threshold: 0.1,
-      enabled: false
+      gain_multipliers: JSON.parse(s['default_gain_multipliers'] ?? '[2,3,4]') as number[],
+      ath_drop_threshold: parseFloat(s['default_ath_drop_threshold'] ?? '0.1'),
+      enabled: s['default_alerts_enabled'] === '1'
     }
   }
   return {

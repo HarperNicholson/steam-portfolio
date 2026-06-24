@@ -6,7 +6,7 @@ import { useStore } from '@/store'
 import styles from './ItemDetail.module.css'
 
 type PricePoint = { timestamp: number; price_usd: number; volume: number }
-type Snapshot = { current_price: number; acquisition_price: number | null; acquisition_date: number | null; acquisition_date_locked: number; all_time_high: number } | null
+type Snapshot = { current_price: number; acquisition_price: number | null; acquisition_date: number | null; acquisition_date_locked: number; all_time_high: number; smart_peak: number | null } | null
 type AlertConfig = { gain_multipliers: number[]; ath_drop_threshold: number; enabled: boolean }
 
 function formatPrice(p: number | null | undefined, sym: string): string {
@@ -140,6 +140,9 @@ export default function ItemDetail(): JSX.Element {
   const acqPrice = snapshot?.acquisition_price ?? inventoryItem?.acquisition_price ?? null
   const acqDate = snapshot?.acquisition_date ?? inventoryItem?.acquisition_date ?? null
   const ath = snapshot?.all_time_high ?? inventoryItem?.all_time_high ?? null
+  const smartPeak = snapshot?.smart_peak ?? null
+  const peakForAlert = (smartPeak ?? 0) > 0 ? smartPeak! : ath
+  const peakLabel = (smartPeak ?? 0) > 0 ? 'Smart Peak' : 'ATH'
   const qty = inventoryItem?.quantity ?? 1
 
   return (
@@ -301,7 +304,7 @@ export default function ItemDetail(): JSX.Element {
           </div>
 
           <div className={styles.alertRow}>
-            <span className={styles.alertLabel}>Alert on ATH drop ≥:</span>
+            <span className={styles.alertLabel}>Alert on {peakLabel} drop ≥:</span>
             <div className={styles.dropGroup}>
               <input
                 type="range"
@@ -324,9 +327,9 @@ export default function ItemDetail(): JSX.Element {
                   <span className="positive">●</span> {m}× gain → triggers at {formatPrice(acqPrice * m, currencySymbol)}
                 </p>
               ))}
-              {ath && ath > 0 && (
+              {peakForAlert && peakForAlert > 0 && (
                 <p className={styles.alertPreviewRow}>
-                  <span className="negative">●</span> ATH drop → triggers at {formatPrice(ath * (1 - alertConfig.ath_drop_threshold), currencySymbol)} ({Math.round(alertConfig.ath_drop_threshold * 100)}% below ATH of {formatPrice(ath, currencySymbol)})
+                  <span className="negative">●</span> {peakLabel} drop → triggers at {formatPrice(peakForAlert * (1 - alertConfig.ath_drop_threshold), currencySymbol)} ({Math.round(alertConfig.ath_drop_threshold * 100)}% below {peakLabel} of {formatPrice(peakForAlert, currencySymbol)})
                 </p>
               )}
             </div>

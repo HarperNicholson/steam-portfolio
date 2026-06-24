@@ -28,6 +28,11 @@ export default function Settings(): JSX.Element {
   const { settings, setSetting, accounts, addToast, isImportingHistory, importHistory } = useStore()
   const [sessionCookie, setSessionCookie] = useState(settings['session_cookie'] ?? '')
   const [removing, setRemoving] = useState<number | null>(null)
+  const [emailTo, setEmailTo] = useState(settings['email_to'] ?? '')
+  const [emailHost, setEmailHost] = useState(settings['email_smtp_host'] ?? '')
+  const [emailPort, setEmailPort] = useState(settings['email_smtp_port'] ?? '587')
+  const [emailUser, setEmailUser] = useState(settings['email_smtp_user'] ?? '')
+  const [emailPass, setEmailPass] = useState(settings['email_smtp_pass'] ?? '')
 
   async function handleRemoveAccount(id: number): Promise<void> {
     setRemoving(id)
@@ -45,6 +50,24 @@ export default function Settings(): JSX.Element {
   async function saveSessionCookie(): Promise<void> {
     await setSetting('session_cookie', sessionCookie.trim())
     addToast('Saved', 'Steam session cookie updated', 'success')
+  }
+
+  async function saveEmailSettings(): Promise<void> {
+    await setSetting('email_to', emailTo.trim())
+    await setSetting('email_smtp_host', emailHost.trim())
+    await setSetting('email_smtp_port', emailPort.trim())
+    await setSetting('email_smtp_user', emailUser.trim())
+    await setSetting('email_smtp_pass', emailPass)
+    addToast('Saved', 'Email settings updated', 'success')
+  }
+
+  async function testEmailNotification(): Promise<void> {
+    try {
+      await window.sp.email.test()
+      addToast('Email sent', `Check ${emailTo} for the test message`, 'info')
+    } catch (err) {
+      addToast('Email failed', String(err), 'warning')
+    }
   }
 
   async function testNotification(): Promise<void> {
@@ -188,6 +211,171 @@ export default function Settings(): JSX.Element {
         </button>
       </Section>
 
+      <Section title="Email Notifications">
+        <div className={styles.row}>
+          <label className={styles.label}>
+            <input
+              type="checkbox"
+              checked={settings['email_enabled'] === '1'}
+              onChange={(e) => setSetting('email_enabled', e.target.checked ? '1' : '0')}
+            />
+            Send email when an alert fires
+          </label>
+        </div>
+        {settings['email_enabled'] === '1' && (
+          <>
+            <div className={styles.row}>
+              <label className={styles.label} style={{ minWidth: 130 }}>Notify address</label>
+              <input
+                type="email"
+                value={emailTo}
+                onChange={(e) => setEmailTo(e.target.value)}
+                placeholder="you@example.com"
+                className={styles.cookieInput}
+              />
+            </div>
+            <div className={styles.row}>
+              <label className={styles.label} style={{ minWidth: 130 }}>SMTP host</label>
+              <input
+                type="text"
+                value={emailHost}
+                onChange={(e) => setEmailHost(e.target.value)}
+                placeholder="smtp.gmail.com"
+                className={styles.cookieInput}
+              />
+            </div>
+            <div className={styles.row}>
+              <label className={styles.label} style={{ minWidth: 130 }}>SMTP port</label>
+              <input
+                type="number"
+                value={emailPort}
+                onChange={(e) => setEmailPort(e.target.value)}
+                className={styles.cookieInput}
+                style={{ maxWidth: 90 }}
+              />
+              <label className={styles.label}>
+                <input
+                  type="checkbox"
+                  checked={settings['email_smtp_secure'] === '1'}
+                  onChange={(e) => setSetting('email_smtp_secure', e.target.checked ? '1' : '0')}
+                />
+                SSL/TLS (port 465)
+              </label>
+            </div>
+            <div className={styles.row}>
+              <label className={styles.label} style={{ minWidth: 130 }}>SMTP username</label>
+              <input
+                type="text"
+                value={emailUser}
+                onChange={(e) => setEmailUser(e.target.value)}
+                placeholder="you@gmail.com"
+                className={styles.cookieInput}
+              />
+            </div>
+            <div className={styles.row}>
+              <label className={styles.label} style={{ minWidth: 130 }}>SMTP password</label>
+              <input
+                type="password"
+                value={emailPass}
+                onChange={(e) => setEmailPass(e.target.value)}
+                placeholder="App password or SMTP password"
+                className={styles.cookieInput}
+              />
+            </div>
+            <div className={styles.cookieRow}>
+              <button className="btn btn-primary" onClick={saveEmailSettings}>Save</button>
+              <button className="btn btn-secondary" onClick={testEmailNotification}>Send test email</button>
+            </div>
+            <p className={styles.hint}>
+              For Gmail: create an <strong>App Password</strong> at myaccount.google.com → Security → App Passwords,
+              then use <code>smtp.gmail.com</code> port <code>587</code> with your Gmail address and the app password.
+            </p>
+            <p className={styles.cookieSecurity}>
+              ⓘ Credentials stored locally in SQLite. Never transmitted anywhere except your SMTP server.
+            </p>
+          </>
+        )}
+      </Section>
+
+      <Section title="Default Alert Settings">
+        <p className={styles.hint}>
+          These defaults apply to items that haven't had alerts manually configured. Change them and the next price
+          refresh will use the updated values for any unconfigured items.
+        </p>
+        <div className={styles.row}>
+          <label className={styles.label}>
+            <input
+              type="checkbox"
+              checked={settings['default_alerts_enabled'] === '1'}
+              onChange={(e) => setSetting('default_alerts_enabled', e.target.checked ? '1' : '0')}
+            />
+            Enable alerts for new items by default
+          </label>
+        </div>
+        <div className={styles.row}>
+          <span className={styles.label} style={{ cursor: 'default' }}>Default gain thresholds:</span>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {[2, 3, 4, 5, 10].map((m) => {
+              const current = JSON.parse(settings['default_gain_multipliers'] ?? '[2,3,4]') as number[]
+              return (
+                <label key={m} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={current.includes(m)}
+                    onChange={(e) => {
+                      const s = new Set(current)
+                      e.target.checked ? s.add(m) : s.delete(m)
+                      setSetting('default_gain_multipliers', JSON.stringify(Array.from(s).sort((a, b) => a - b)))
+                    }}
+                  />
+                  {m}×
+                </label>
+              )
+            })}
+          </div>
+        </div>
+        <div className={styles.row}>
+          <label className={styles.label} style={{ cursor: 'default', minWidth: 200 }}>
+            Default ATH drop threshold: {Math.round(parseFloat(settings['default_ath_drop_threshold'] ?? '0.1') * 100)}%
+          </label>
+          <input
+            type="range"
+            min="5"
+            max="50"
+            step="5"
+            value={Math.round(parseFloat(settings['default_ath_drop_threshold'] ?? '0.1') * 100)}
+            onChange={(e) => setSetting('default_ath_drop_threshold', String(parseInt(e.target.value) / 100))}
+            style={{ width: 120 }}
+          />
+        </div>
+      </Section>
+
+      <Section title="Smart Range">
+        <p className={styles.hint}>
+          New items often spike in price due to scarcity when first released. Smart Range skips the first{' '}
+          <strong>N days</strong> of price history when computing the peak price, giving a more realistic
+          baseline for drop alerts. Set to 0 to disable (uses standard All-Time High).
+        </p>
+        <div className={styles.row}>
+          <label className={styles.label}>Skip initial days</label>
+          <input
+            type="number"
+            min="0"
+            max="365"
+            step="1"
+            value={settings['smart_range_days'] ?? '0'}
+            onChange={(e) => setSetting('smart_range_days', e.target.value)}
+            className={styles.select}
+            style={{ minWidth: 72, width: 72 }}
+          />
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+            {parseInt(settings['smart_range_days'] ?? '0') > 0
+              ? `Drop alerts use Smart Peak (skips first ${settings['smart_range_days']} days)`
+              : 'Disabled — using standard ATH'}
+          </span>
+        </div>
+      </Section>
+
       <Section title="Accounts">
         {accounts.length === 0 ? (
           <p className={styles.hint}>No accounts added yet.</p>
@@ -216,7 +404,7 @@ export default function Settings(): JSX.Element {
 
       <Section title="About">
         <p className={styles.hint}>
-          SteamPortfolio v0.1.1 · MIT License
+          SteamPortfolio v0.1.41 · MIT License
         </p>
         <p className={styles.hint}>
           Price data sourced from the Steam Community Market. Not affiliated with Valve.
